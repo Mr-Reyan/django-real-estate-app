@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Property, PropertyImage, UserProfile, VisitRequests
+from .models import Property, PropertyImage, UserProfile, VisitRequests, Review
 from django.utils.text import slugify
 from .serializers import PropertySerializer, PropertyImageSerializer, RegisterSerializer,UserSerializer, ProfileSerializer, VisitReqSerializer,ReviewSerializer
 from django.contrib.auth import get_user_model
@@ -16,8 +16,6 @@ User = get_user_model()
 def view_property(request):
     try:
         properties = Property.objects.all()
-        # prop = Property.objects.get(id=1)
-        # print(request.user == prop.owner)
         serializer = PropertySerializer(properties,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
     except Exception as e:
@@ -258,3 +256,14 @@ def create_review(request):
         return Response(serializer.data, status=201)
 
     return Response(serializer.errors, status=400)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def delete_review(request,rev_id):
+    review = get_object_or_404(Review,id=rev_id)
+    if review.reviewer != request.user:
+        return Response({"Error":"You cannot delete other's review"},status=403)
+    review.delete()
+    
+    return Response({'message':'Review removed.'})
