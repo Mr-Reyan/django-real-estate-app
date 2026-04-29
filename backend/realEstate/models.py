@@ -22,6 +22,21 @@ class UserProfile(models.Model):
     phone = models.CharField(max_length=20)
     owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     address = models.CharField(max_length=225)
+    slug = models.SlugField(unique=True,max_length=225, null=True,blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title)
+            slug = base_slug
+            counter = 1
+
+            while Property.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+
+            self.slug = slug
+
+        super().save(*args, **kwargs)
     
 
 class Property(models.Model):

@@ -21,7 +21,6 @@ export const PropertyProvider = ({ children }) => {
 
             const data = await res.json()
 
-            console.log(data)
 
             setProperties(data.results || null)
             setNextPage(data.next)
@@ -38,8 +37,8 @@ export const PropertyProvider = ({ children }) => {
 
     }, [])
 
-    const fetchPage = (page) => {
-        getProperties(`${BASEURL}/api/property/?page=${page}`)
+    const fetchPage = (url) => {
+        getProperties(url)
     }
 
     const deleteProp = async (id) => {

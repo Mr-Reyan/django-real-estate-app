@@ -43,14 +43,22 @@ def create_property(request):
     try:
         data = request.data
         title = data.get("title")
-        if not title:
-            return Response({"error": "Title is required"}, status=400)
+        if not title or not data.get("price") or not data.get("prop_status"):
+            return Response({"error": "Missing required fields"}, status=400)
+        
+        
         property = Property.objects.create(
-            title = title,
-            slug= slugify(title),
-            price = data.get("price"),
-            prop_status = data.get("status"),
-            owner = request.user
+            title=data.get("title"),
+            price=data.get("price"),
+            prop_status=data.get("prop_status"),  
+            type=data.get("type"),
+            description=data.get("description"),
+            address=data.get("address"),
+            city=data.get("city"),
+            state=data.get("state"),
+            country=data.get("country"),
+            postal_code=data.get("postal_code"),
+            owner=request.user
         )
 
         images = request.FILES.getlist("images")
@@ -61,6 +69,7 @@ def create_property(request):
                 image=img,
                 is_primary=(index==0)
             )
+
         serializer = PropertySerializer(property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
         
@@ -173,8 +182,6 @@ def update_profile(request):
     profile.age = request.data.get("age")
     profile.phone = request.data.get("phone")
     profile.address = request.data.get("address")
-    profile.role = request.data.get("role")
-    profile.slug = slugify(profile.name)
     
     profile.save()
     serializer = ProfileSerializer(profile)

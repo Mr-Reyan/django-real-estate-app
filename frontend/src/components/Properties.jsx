@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react"
-import { useProperty, prevPage,nextPage,count,fetchPage } from '../context/PropertyContext'
+import { useProperty } from '../context/PropertyContext'
 import AddProp from "./AddProp"
 import { getAccessToken } from "../utils/auth"
 import { useAuth } from "../context/AuthContext"
 const Properties = () => {
-    const { properties, deleteProp, getProperties } = useProperty()
+    const { properties, deleteProp, getProperties, prevPage, nextPage, count, fetchPage } = useProperty()
 
     const [addProp, setAddProp] = useState(false)
     const [user, setUser] = useState(null)
     const { getUser } = useAuth()
 
 
-    
+
 
     useEffect(() => {
         getProperties()
@@ -69,14 +69,9 @@ const Properties = () => {
                     ))
                 }
                 <div>
-                    <button
-                        disabled={!prevPage}
-                        onClick={() => fetchPage(prevPage)}
-                    >
-                        Previous
-                    </button>
+                    
 
-                    <button
+                    {/* <button
                         onClick={() => fetchPage(1)}
                     >
                         1
@@ -95,12 +90,19 @@ const Properties = () => {
                         onClick={() => fetchPage(4)}
                     >
                         4
-                    </button>
+                    </button> */}
 
                     <button
-                        disabled={!nextPage}
-                        onClick={() => getProperties(nextPage)}
-                    >
+                    disabled={!prevPage}
+                    onClick={() => getProperties(prevPage)} 
+                    type="button" className="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent  bg-zinc-100 text-zinc-800 hover:bg-zinc-200 focus:outline-hidden focus:bg-zinc-200 active:bg-zinc-200 disabled:opacity-50  disabled:pointer-events-none" >
+                        Previous
+                    </button>
+                    <button
+                    disabled={!nextPage}
+                    onClick={() => getProperties(nextPage)} 
+                    
+                    type="button" className="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent  bg-zinc-100 text-zinc-800 hover:bg-zinc-200 focus:outline-hidden focus:bg-zinc-200 active:bg-zinc-200 disabled:opacity-50  disabled:pointer-events-none" >
                         Next
                     </button>
                 </div>

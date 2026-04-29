@@ -28,14 +28,53 @@ export const refreshToken = async () => {
     localStorage.setItem("access", data.access);
 };
 
-export const authFetch = (url, options = {}) => {
-    const token = getAccessToken()
+const refreshAccessToken = async () => {
+    const refresh = localStorage.getItem("refresh_token")
+
+    const res = await fetch(`${BASEURL}/api/token/refresh/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ refresh })
+    })
+
+    const data = await res.json()
+
+    localStorage.setItem("access_token", data.access)
+
+    return data.access
+}
+
+
+export const authFetch = async (url, options = {}) => {
+    let token = localStorage.getItem("access_token")
     const headers = options.headers ? { ...options.headers } : {}
     if (token) headers["Authorization"] = `Bearer ${token}`
-    headers["Content-Type"] = "application/json"
+    const isFormData = options.body instanceof FormData
 
-    return fetch(url, {
+
+    if (!isFormData) {
+        headers["Content-Type"] = "application/json"
+    }
+
+    let res = await fetch(url, {
         ...options,
         headers
     })
+
+    // if token expired
+    if (res.status === 401) {
+        token = await refreshAccessToken()
+
+        res = await fetch(url, {
+            ...options,
+            headers: {
+                ...options.headers,
+                Authorization: `Bearer ${token}`
+            }
+        })
+    }
+
+    return res
 }
