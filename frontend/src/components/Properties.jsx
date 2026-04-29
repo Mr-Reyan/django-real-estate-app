@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react"
-import { useProperty } from '../context/PropertyContext'
+import { useProperty, prevPage,nextPage,count,fetchPage } from '../context/PropertyContext'
 import AddProp from "./AddProp"
-import {  getAccessToken } from "../utils/auth"
+import { getAccessToken } from "../utils/auth"
 import { useAuth } from "../context/AuthContext"
 const Properties = () => {
     const { properties, deleteProp, getProperties } = useProperty()
 
     const [addProp, setAddProp] = useState(false)
     const [user, setUser] = useState(null)
-    const {getUser} = useAuth()
+    const { getUser } = useAuth()
 
 
     
@@ -23,8 +23,8 @@ const Properties = () => {
             }
             const data = await getUser()
             setUser(data)
-            
-            
+
+
         }
         fetchUser()
     }, [])
@@ -33,6 +33,7 @@ const Properties = () => {
 
     return (
         <>
+            <h4>Total properties:{count}</h4>
             {addProp && <AddProp setAddProp={setAddProp} getProperties={getProperties} />}
             <div className="w-screen py-10 px-4 ">
 
@@ -52,21 +53,57 @@ const Properties = () => {
                             <h2 className="text-3xl font-bold text-zinc-700">{item.status}</h2>
                             {/* <button onClick={()=>console.log(item.owner)}>LOG</button> */}
                             <div className="flex flex-row gap-2">
-                                {user && user.id == item.owner ?(
+                                {user && user.id == item.owner ? (
                                     <>
-                                    <button className="bg-blue-700 cursor-pointer text-white p-2 rounded-sm my-3">Edit</button>
-                                <button
-                                className="bg-red-500 cursor-pointer text-white p-2 rounded-sm my-3"
-                                onClick={() => { deleteProp(item.id) }}
-                                >Delete</button>
-                                </>
-                            ):(
-                                <></>
-                            )}
+                                        <button className="bg-blue-700 cursor-pointer text-white p-2 rounded-sm my-3">Edit</button>
+                                        <button
+                                            className="bg-red-500 cursor-pointer text-white p-2 rounded-sm my-3"
+                                            onClick={() => { deleteProp(item.id) }}
+                                        >Delete</button>
+                                    </>
+                                ) : (
+                                    <></>
+                                )}
                             </div>
                         </div>
                     ))
                 }
+                <div>
+                    <button
+                        disabled={!prevPage}
+                        onClick={() => fetchPage(prevPage)}
+                    >
+                        Previous
+                    </button>
+
+                    <button
+                        onClick={() => fetchPage(1)}
+                    >
+                        1
+                    </button>
+                    <button
+                        onClick={() => fetchPage(2)}
+                    >
+                        2
+                    </button>
+                    <button
+                        onClick={() => fetchPage(3)}
+                    >
+                        3
+                    </button>
+                    <button
+                        onClick={() => fetchPage(4)}
+                    >
+                        4
+                    </button>
+
+                    <button
+                        disabled={!nextPage}
+                        onClick={() => getProperties(nextPage)}
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
         </>
     )
