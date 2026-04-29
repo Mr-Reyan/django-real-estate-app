@@ -5,7 +5,9 @@ const PropertyContext = createContext()
 export const PropertyProvider = ({children}) => {
     const BASEURL = import.meta.env.VITE_DJANGO_URL
     const [properties, setProperties] = useState([])
-
+    const [nextPage, setNextPage] = useState(null)
+    const [prevPage, setPrevPage] = useState(null)
+    const [cout, setCout] = useState(null)
 
     const getProperties = async () => {
         try {
@@ -16,7 +18,12 @@ export const PropertyProvider = ({children}) => {
             }
             
             const data = await res.json()
-            setProperties(data)
+            console.log(data)
+            
+            setProperties(data.results)
+            setNextPage(data.next)
+            setPrevPage(data.previous)
+            setCount(data.count)
 
         } catch (e) {
             console.log("Error fetching Property", e);

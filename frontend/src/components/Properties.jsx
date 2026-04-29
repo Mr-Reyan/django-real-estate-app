@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useProperty } from '../context/PropertyContext'
 import AddProp from "./AddProp"
-import { authFetch, getAccessToken } from "../utils/auth"
+import {  getAccessToken } from "../utils/auth"
 import { useAuth } from "../context/AuthContext"
 const Properties = () => {
     const { properties, deleteProp, getProperties } = useProperty()
@@ -23,7 +23,7 @@ const Properties = () => {
             }
             const data = await getUser()
             setUser(data)
-            console.log(data)
+            
             
         }
         fetchUser()

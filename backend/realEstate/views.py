@@ -9,15 +9,30 @@ from django.utils.text import slugify
 from .serializers import PropertySerializer, PropertyImageSerializer, RegisterSerializer,UserSerializer, ProfileSerializer, VisitReqSerializer,ReviewSerializer
 from django.contrib.auth import get_user_model
 from .permissions import IsAgent
+from rest_framework.pagination import PageNumberPagination
 
 User = get_user_model()
+
+
+class PropertyPagination(PageNumberPagination):
+    page_size = 1
+    page_size_query_param = 'page_size'
+    max_page_size = 20
+
+
 
 @api_view(['GET'])
 def view_property(request):
     try:
+
         properties = Property.objects.all()
-        serializer = PropertySerializer(properties,many=True)
-        return Response(serializer.data,status=status.HTTP_200_OK)
+        paginator = PropertyPagination()
+        paginated_qs = paginator.paginate_queryset(properties,request)
+    
+        serializer = PropertySerializer(paginated_qs,many=True)
+
+        return paginator.get_paginated_response(serializer.data)
+    
     except Exception as e:
         return Response(f"Error viewing Properties: {e}",status=status.HTTP_400_BAD_REQUEST)
 
