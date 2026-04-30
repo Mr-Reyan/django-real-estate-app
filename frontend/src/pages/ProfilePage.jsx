@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import CreateProfile from "./CreateProfile"
+import CreateProfile from "../components/CreateProfile"
 import ProfileDetail from "./ProfileDetail"
 import { useParams } from "react-router-dom"
 import { authFetch } from "../utils/auth"

@@ -5,7 +5,7 @@ import { authFetch, clearToken, getAccessToken } from "../utils/auth";
 import { useAuth } from "../context/AuthContext";
 
 function Navbar() {
-
+    const token = getAccessToken()
     const BASEURL = import.meta.env.VITE_DJANGO_URL;
     const { user, loading } = useAuth()
     const [profile,setProfile] = useState(null)
@@ -31,7 +31,7 @@ function Navbar() {
                     href="/"
                     className="text-gray-700 font-medium hover:text-green-600 transition"
                 >
-                    Popular
+                    Properties
                 </a>
 
                 <a
@@ -42,7 +42,7 @@ function Navbar() {
                 </a>
 
                 <a
-                    href="#"
+                    href="/filter"
                     className="text-gray-700 font-medium hover:text-green-600 transition"
                 >
                     Filters
@@ -50,7 +50,7 @@ function Navbar() {
 
             </div>
             <div className="flex items-center gap-6">
-                {!profile &&(
+                {token &&(
                     <button onClick={()=>navigate(`/profile`)} className="px-4 py-2 bg-indigo-600 text-white rounded" >My Profile</button>
                 )}
                 {user ? (

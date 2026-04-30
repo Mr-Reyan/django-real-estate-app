@@ -83,6 +83,7 @@ const CreateProfile = ({ onCreated }) => {
 
         <input
           name="phone"
+          type="number"
           placeholder="Phone"
           value={form.phone}
           onChange={handleChange}

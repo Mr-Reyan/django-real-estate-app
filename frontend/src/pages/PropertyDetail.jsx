@@ -1,9 +1,10 @@
 import { useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { useAuth } from "../context/AuthContext"
-import { authFetch } from "../utils/auth"
+import { authFetch,getAccessToken } from "../utils/auth"
 
 const PropertyDetail = () => {
+    const token = getAccessToken()
     const { id } = useParams()
     const [property, setProperty] = useState(null)
     const BASEURL = import.meta.env.VITE_DJANGO_URL
@@ -21,7 +22,6 @@ const PropertyDetail = () => {
     }, [id])
 
     if (!property) return <p>Loading...</p>
-    console.log(property.images);
 
     const handleVisitRequest = async () => {
         try {
@@ -39,10 +39,9 @@ const PropertyDetail = () => {
                         time: "14:00",
                     })
                 }
-            );
+            )
 
             const data = await res.json()
-            console.log(data)
 
             if (!res.ok) {
                 throw new Error(data.error || "Request failed")
@@ -125,7 +124,7 @@ const PropertyDetail = () => {
             </div>
 
 
-            {!isOwner && (
+            {!isOwner && token && (
                 <button
                     onClick={handleVisitRequest}
                     className="mt-6 w-full sm:w-auto px-6 py-3 bg-green-600 text-white font-medium rounded-lg shadow hover:bg-green-700 active:scale-95 transition"

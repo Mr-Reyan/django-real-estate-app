@@ -123,8 +123,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_USER_MODEL = 'realEstate.User'
 
-print("BASE_DIR:", BASE_DIR)
-print("MEDIA_ROOT:", MEDIA_ROOT)
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [

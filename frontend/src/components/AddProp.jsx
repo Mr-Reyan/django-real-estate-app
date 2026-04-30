@@ -56,8 +56,7 @@ const AddProp = ({ setAddProp }) => {
             const result = await response.json();
 
             if (response.ok) {
-                console.log("Success:", result);
-                // getProperties()
+                getProperties()
                 setAddProp(false)
             }
         } catch (error) {

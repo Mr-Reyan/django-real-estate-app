@@ -7,6 +7,7 @@ import Navbar from './components/Navbar'
 import { Route, Routes } from 'react-router-dom'
 import ProfilePage from './pages/ProfilePage'
 import Agents from './pages/Agents'
+import Filter from './components/Filter'
 const App = () => {
   return (
     <>
@@ -19,6 +20,7 @@ const App = () => {
         <Route path="/profile" element={<ProfilePage/>} />
         <Route path="/profile/:id" element={<ProfilePage/>} />
         <Route path="/agents/" element={<Agents/>} />
+        <Route path="/filter/" element={<Filter/>} />
       </Routes>
     </>
   )
