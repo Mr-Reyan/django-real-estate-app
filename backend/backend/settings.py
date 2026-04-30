@@ -118,11 +118,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #CHANGES TO SETTINGS.py
 
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_USER_MODEL = 'realEstate.User'
 
-
+print("BASE_DIR:", BASE_DIR)
+print("MEDIA_ROOT:", MEDIA_ROOT)
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [

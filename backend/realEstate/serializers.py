@@ -13,7 +13,8 @@ class PropertyImageSerializer(serializers.ModelSerializer):
 
 class PropertySerializer(serializers.ModelSerializer):
     likes_cout = serializers.SerializerMethodField()
-
+    images = PropertyImageSerializer(many=True, read_only=True)
+    
     class Meta:
         model = Property
         fields = "__all__"

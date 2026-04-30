@@ -22,7 +22,7 @@ class PropertyPagination(PageNumberPagination):
 
 
 @api_view(['GET'])
-def view_property(request):
+def view_properties(request):
     try:
 
         properties = Property.objects.all()
@@ -35,6 +35,19 @@ def view_property(request):
     
     except Exception as e:
         return Response(f"Error viewing Properties: {e}",status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def property_detail(request,id):
+    try:
+
+
+        property = get_object_or_404(Property, id=id)
+        serializer = PropertySerializer(property)
+        return Response(serializer.data)
+    
+    except Exception as e:
+        return Response(f"Error viewing Properties: {e}",status=status.HTTP_400_BAD_REQUEST)
+
 
 
 @api_view(['POST'])

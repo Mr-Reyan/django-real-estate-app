@@ -7,22 +7,45 @@ import { useAuth } from "../context/AuthContext";
 function Navbar() {
 
     const { user, loading } = useAuth()
-    
-    
+
+
     const handleLogout = () => {
         clearToken()
         window.location.reload()
     }
 
     if (loading) return null
+
     return (
         <nav className="z-50 top-0 w-full sticky items-center justify-between flex py-4 px-6 shadow-md bg-white">
             <Link to="/" className="text-2xl font-bold text-gray-800">
                 DEAL IN LAND
             </Link>
+            <div className="flex items-center gap-6 px-4 py-3 bg-white shadow-sm rounded-lg">
 
+                <a
+                    href="#"
+                    className="text-gray-700 font-medium hover:text-green-600 transition"
+                >
+                    Popular
+                </a>
+
+                <a
+                    href="#"
+                    className="text-gray-700 font-medium hover:text-green-600 transition"
+                >
+                    Agents
+                </a>
+
+                <a
+                    href="#"
+                    className="text-gray-700 font-medium hover:text-green-600 transition"
+                >
+                    Filters
+                </a>
+
+            </div>
             <div className="flex items-center gap-6">
-                {/* Login/Signup or Logout */}
                 {user ? (
                     <button onClick={handleLogout} className="text-gray-800 cursor-pointer hover:text-gray-600 font-medium">Logout</button>
                 ) : (
@@ -31,6 +54,7 @@ function Navbar() {
                         <Link to="/signup" className="text-gray-800 hover:text-gray-600 cursor-pointer font-medium">Sign Up</Link>
                     </>
                 )}
+                {/* Login/Signup or Logout */}
             </div>
         </nav>
     )
