@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext, useContext } from "react";
+import {useSearchParams} from 'react-router-dom'
 import { authFetch, getAccessToken } from "../utils/auth";
 const PropertyContext = createContext()
 
@@ -8,12 +9,14 @@ export const PropertyProvider = ({ children }) => {
     const [nextPage, setNextPage] = useState(null)
     const [prevPage, setPrevPage] = useState(null)
     const [count, setCount] = useState(0)
-    const [currentUrl, setCurrentUrl] = useState(`${BASEURL}/api/property/`)
+    const [searchParams, setSearchParams] = useSearchParams()
+    const [currentUrl, setCurrentUrl] = useState()
 
+    const page = searchParams.get("page") || 1
 
-    const getProperties = async (url = currentUrl) => {
+    const getProperties = async (pageNumber = page) => {
         try {
-            const res = await fetch(url)
+            const res = await fetch(`${BASEURL}/api/property/?page=${pageNumber}`)
 
             if (!res.ok) {
                 throw new Error("HTTP Error. status:" + res.status)
@@ -21,7 +24,14 @@ export const PropertyProvider = ({ children }) => {
 
             const data = await res.json()
 
+            if(data.results.length == 0 && pageNumber > 1){
+                const newPage = pageNumber - 1
+                setSearchParams({page: newPage})
+                return getProperties(newPage)
+            }
 
+            console.log(data.results);
+            
             setProperties(data.results || null)
             setNextPage(data.next)
             setPrevPage(data.previous)
@@ -33,13 +43,15 @@ export const PropertyProvider = ({ children }) => {
     }
 
     useEffect(() => {
-        getProperties(currentUrl)
+        getProperties(page)
 
     }, [])
 
-    const fetchPage = (url) => {
-        getProperties(url)
-    }
+    const changePage = (newPage) => {
+    setSearchParams({ page: newPage })   
+    getProperties(newPage)               
+}
+
 
     const deleteProp = async (id) => {
         try {
@@ -53,7 +65,7 @@ export const PropertyProvider = ({ children }) => {
 
             if (!res.ok) throw new Error("Delete failed")
 
-            getProperties(currentUrl)
+            getProperties(page)
 
         } catch (err) {
             console.log(err)
@@ -62,7 +74,7 @@ export const PropertyProvider = ({ children }) => {
 
     return (
         <PropertyContext.Provider
-            value={{ deleteProp, getProperties, properties, prevPage, nextPage, count, fetchPage }}
+            value={{ deleteProp, getProperties, properties, prevPage, nextPage, count, changePage, page }}
         >
             {children}
         </PropertyContext.Provider>

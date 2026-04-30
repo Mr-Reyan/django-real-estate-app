@@ -77,6 +77,7 @@ const AddProp = ({ setAddProp }) => {
                     placeholder="Title"
                     onChange={handleChange}
                     className="border p-2 w-auto min-w-64"
+                    required
                 />
 
                 <textarea
@@ -92,9 +93,10 @@ const AddProp = ({ setAddProp }) => {
                     type="number"
                     onChange={handleChange}
                     className="border p-2 w-auto min-w-64"
+                    required
                 />
 
-                <select name="prop_status" onChange={handleChange} className="border p-2 w-auto min-w-64">
+                <select name="prop_status" required onChange={handleChange} className="border p-2 w-auto min-w-64">
                     <option value="sale">Sale</option>
                     <option value="rent">Rent</option>
                 </select>
