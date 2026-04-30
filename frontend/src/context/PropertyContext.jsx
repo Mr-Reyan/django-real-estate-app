@@ -30,7 +30,6 @@ export const PropertyProvider = ({ children }) => {
                 return getProperties(newPage)
             }
 
-            console.log(data.results);
             
             setProperties(data.results || null)
             setNextPage(data.next)
@@ -74,7 +73,7 @@ export const PropertyProvider = ({ children }) => {
 
     return (
         <PropertyContext.Provider
-            value={{ deleteProp, getProperties, properties, prevPage, nextPage, count, changePage, page }}
+            value={{ deleteProp, getProperties, properties,setNextPage,setPrevPage,setCount, prevPage, nextPage, count, changePage, page }}
         >
             {children}
         </PropertyContext.Provider>

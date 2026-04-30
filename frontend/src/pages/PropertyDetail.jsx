@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { useAuth } from "../context/AuthContext"
+import { authFetch } from "../utils/auth"
 
 const PropertyDetail = () => {
     const { id } = useParams()
@@ -24,7 +25,7 @@ const PropertyDetail = () => {
 
     const handleVisitRequest = async () => {
         try {
-            const res = await fetch(
+            const res = await authFetch(
                 `${BASEURL}/api/property/submit_req/${id}`,
                 {
                     method: "POST",

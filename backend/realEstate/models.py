@@ -26,7 +26,7 @@ class UserProfile(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            base_slug = slugify(self.title)
+            base_slug = slugify(self.name)
             slug = base_slug
             counter = 1
 

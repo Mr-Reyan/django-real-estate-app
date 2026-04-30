@@ -20,7 +20,12 @@ urlpatterns = [
     path('property/is_liked/<int:id>',views.is_liked),
     path('profile/create/',views.create_profile),
     path('profile/update/',views.update_profile),
+
+    path("agents/", views.get_all_agents),
+
+    path('profile/me/',views.my_profile),
     path('profile/<int:prof_id>',views.show_profile),
+    
     path('property/submit_req/<int:property_id>',views.submit_request),
     path('property/get_requests/<int:property_id>',views.get_requests),
     path('property/reject_requests/<int:property_id>',views.reject_request),

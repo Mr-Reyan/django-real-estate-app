@@ -12,11 +12,14 @@ export const AuthProvider = ({children}) =>{
 
             const token = getAccessToken()
             if(!token) return null
-
+            
             const res = await authFetch(`${BASEURL}/api/user/`)
             if (!res.ok) return null
+            
+            
 
             return await res.json()
+
 
         } catch (err) {
             console.log(err);

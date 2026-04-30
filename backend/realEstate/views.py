@@ -15,9 +15,27 @@ User = get_user_model()
 
 
 class PropertyPagination(PageNumberPagination):
-    page_size = 1
+    page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 20
+
+
+@api_view(['GET'])
+def get_all_agents(request):
+    try:
+        agents = UserProfile.objects.filter(owner__role="agent")
+
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+
+        result_page = paginator.paginate_queryset(agents, request)
+
+        serializer = ProfileSerializer(result_page, many=True)
+
+        return paginator.get_paginated_response(serializer.data)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
 
 
 
@@ -200,7 +218,20 @@ def update_profile(request):
     serializer = ProfileSerializer(profile)
     return Response(serializer.data,status=200)
     
-    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_profile(request):
+    try:
+        profile = request.user.profile
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data)
+
+    except UserProfile.DoesNotExist:
+        return Response(
+            {"detail": "Profile not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
 
 @api_view(['GET'])
 def show_profile(request,prof_id):
