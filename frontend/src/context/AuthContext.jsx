@@ -28,18 +28,18 @@ export const AuthProvider = ({children}) =>{
         }
     }
 
+    const fetchUser = async ()=>{
+        const data = await getUser()
+        setUser(data)
+        
+        setLoading(false)
+    }
     useEffect(()=>{
-        const fetchUser = async ()=>{
-            const data = await getUser()
-            setUser(data)
-            
-            setLoading(false)
-        }
         fetchUser()
     },[])
 
     return (
-        <AuthContext.Provider value={{user,setUser,getUser,loading}}>
+        <AuthContext.Provider value={{user,setUser,getUser,loading,fetchUser}}>
             {children}
         </AuthContext.Provider>
     )

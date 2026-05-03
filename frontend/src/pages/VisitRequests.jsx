@@ -75,8 +75,8 @@ function VisitRequests() {
                                     className="h-56 w-50 rounded-md object-cover" />
                             </div>
                             <div className="space-y-2">
-                                <h2 className="text-lg font-semibold text-gray-800">
-                                    {req.property.title}
+                                <h2 className="text-lg font-semibold whitespace-nowrap text-ellipsis text-gray-800">
+                                    Property: {req.property.title}
                                 </h2>
 
                                 <p className="text-sm text-gray-600">
@@ -89,8 +89,8 @@ function VisitRequests() {
                                 <p className="text-sm text-gray-500">
                                     Request Date: {req.created_at?.slice(0, 10)}
                                 </p>
-                                <p className="text-xl text-gray-800">
-                                    Visit On: {req.created_at?.slice(0, 10)}
+                                <p className="text-sm text-gray-800">
+                                    Visit Time: {req.time?.split(":").slice(0, 2).join(":")}
                                 </p>
 
                                 <span

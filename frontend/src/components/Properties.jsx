@@ -12,17 +12,16 @@ const Properties = () => {
     const [addProp, setAddProp] = useState(false)
     const [user, setUser] = useState(null)
     const { getUser } = useAuth()
-    const [filters, setFilters] = useState({
-        title: '',
-        location: '',
-        minPrice: 0,
-        maxPrice: 1000000,
-        type: '' // residential etc
-    })
+    const [filteredData, setFilteredData] = useState(properties)
+
 
     const navigate = useNavigate()
 
-
+    useEffect(() => {
+        if (properties) {
+            setFilteredData(properties);
+        }
+    }, [properties]);
 
     useEffect(() => {
         getProperties(page)
@@ -39,16 +38,27 @@ const Properties = () => {
         fetchUser()
     }, [])
 
-    // const filteredProperties = properties.filter((p) =>
-    //     `${p.title} ${p.location}`
-    //         .toLowerCase()
-    //         .includes(filters.toLowerCase())
-    // )
+    const handleSearch = (query) => {
+        const results = properties.filter((item) => {
+            const matchTitle = item.title.toLowerCase().includes(query.title.toLowerCase())
+            const matchCountry = query.country === "" || item.country === query.country
+            const matchType = query.type === "" || item.type === query.type
+            const matchPrice = query.maxPrice === "" || item.price <= parseInt(query.maxPrice)
+            // console.log(matchCountry);
+            // console.log(matchPrice);
+            console.log(matchTitle);
+            // console.log(matchType);
+            
+            return matchTitle && matchCountry && matchType && matchPrice
+        }) || []
+
+        setFilteredData(results)
+    }
 
 
     return (
         <>
-            <SearchProperty properties={properties} />
+            <SearchProperty onSearch={handleSearch} />
 
 
 
@@ -71,72 +81,83 @@ const Properties = () => {
                     </button>
                 </div>
             )}
-            <div className="w-screen flex flex-wrap justify-center items-center py-10 px-4 ">
+            
+            {filteredData.length>0?(
+                <div className="w-screen flex flex-wrap justify-center items-center py-10 px-4 ">
 
-                {
-                    properties.map((item, index) => (
+                {filteredData.map((item, index) => (
 
-                        <div onClick={() => navigate(`/property/${item.id}`)} className="block cursor-pointer rounded-lg p-4 shadow-xs shadow-indigo-100" key={index}>
-                            <img alt=""
-                                src={item.images?.find(img => img.is_primary)?.image
-                                    ? `${BASEURL}${item.images.find(img => img.is_primary).image}`
-                                    : item.images?.[0]?.image
-                                        ? `${BASEURL}${item.images[0].image}`
-                                        : "/bed.jpg"
-                                }
-                                className="h-56 w-50 rounded-md object-cover" />
+                    <div onClick={() => navigate(`/property/${item.id}`)} className="block cursor-pointer rounded-lg p-4 shadow-xs shadow-indigo-100" key={index}>
+                        <img alt=""
+                            src={item.images?.find(img => img.is_primary)?.image
+                                ? `${BASEURL}${item.images.find(img => img.is_primary).image}`
+                                : item.images?.[0]?.image
+                                    ? `${BASEURL}${item.images[0].image}`
+                                    : "/bed.jpg"
+                            }
+                            className="h-56 w-50 rounded-md object-cover" />
 
-                            <div className="mt-2">
-                                <dl>
-                                    <div>
-                                        <dt className="sr-only">Price</dt>
+                        <div className="mt-2">
+                            <dl>
+                                <div>
+                                    <dt className="sr-only">Price</dt>
 
-                                        <dd className="text-sm text-gray-500">${item.price}</dd>
-                                    </div>
-
-                                    <div>
-                                        <dt className="sr-only">Address</dt>
-
-                                        <dd className="font-medium">{item.address}</dd>
-                                    </div>
-                                </dl>
-
-                                <div className="mt-6 flex items-center gap-8 text-xs">
-                                    <div className="sm:inline-flex sm:shrink-0 sm:items-center sm:gap-2">
-                                        <svg className="size-4 text-indigo-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
-                                        </svg>
-
-                                        <div className="mt-1.5 sm:mt-0">
-                                            <p className="text-gray-500">Country</p>
-
-                                            <p className="font-medium">{item.country}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="sm:inline-flex sm:shrink-0 sm:items-center sm:gap-2">
-                                        <svg className="size-4 text-indigo-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
-                                        </svg>
-
-                                        <div className="mt-1.5 sm:mt-0">
-                                            <p className="text-gray-500">Status</p>
-
-                                            <p className="font-medium">{(item.prop_status)}</p>
-                                        </div>
-                                    </div>
-
-
+                                    <dd className="text-sm text-gray-500">${item.price}</dd>
                                 </div>
+
+                                <div>
+                                    <dt className="sr-only">Title</dt>
+
+                                    <dd className="font-medium">{item.title}</dd>
+                                </div>
+                            </dl>
+
+                            <div className="mt-6 flex items-center gap-8 text-xs">
+                                <div className="sm:inline-flex sm:shrink-0 sm:items-center sm:gap-2">
+                                    <svg className="size-4 text-indigo-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
+                                    </svg>
+
+                                    <div className="mt-1.5 sm:mt-0">
+                                        <p className="text-gray-500">Country</p>
+
+                                        <p className="font-medium">{item.country}</p>
+                                    </div>
+                                </div>
+
+                                <div className="sm:inline-flex sm:shrink-0 sm:items-center sm:gap-2">
+                                    <svg className="size-4 text-indigo-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                                    </svg>
+
+                                    <div className="mt-1.5 sm:mt-0">
+                                        <p className="text-gray-500">Status</p>
+
+                                        <p className="font-medium">{(item.prop_status)}</p>
+                                    </div>
+                                </div>
+
+
                             </div>
                         </div>
+                    </div>
 
 
 
 
-                    ))
+                ))
                 }
             </div>
+            ):(<div className="text-center py-20">
+            <p className="text-gray-500 text-xl">No properties found matching your search.</p>
+            <button 
+              onClick={() => setFilteredData(properties)}
+              className="mt-4 text-blue-600 font-semibold underline"
+            >
+              Clear all filters
+            </button>
+          </div>)}
+            
             <div className="flex gap-3 w-auto justify-center items-center">
                 <button
                     disabled={!prevPage}

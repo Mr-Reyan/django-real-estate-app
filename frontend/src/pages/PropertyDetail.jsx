@@ -20,8 +20,8 @@ const PropertyDetail = () => {
     const [formData, setFormData] = useState({})
     const [visitDate, setVisitDate] = useState('')
     const [visitTime, setVisitTime] = useState('')
-    const [phone,setPhone] = useState('')
-    
+    const [phone, setPhone] = useState('')
+
     useEffect(() => {
         fetchProperty()
         checkLiked()
@@ -84,8 +84,8 @@ const PropertyDetail = () => {
         }
     }
 
-    
-    
+
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
@@ -108,7 +108,7 @@ const PropertyDetail = () => {
                 method: 'PATCH',
                 body: JSON.stringify(payload)
             }
-        )
+            )
             const data = await res.json()
             if (!res.ok) {
                 throw new Error("Update failed");
@@ -129,12 +129,12 @@ const PropertyDetail = () => {
         const confirmDelete = window.confirm('Are you sure you want to delete this property?')
         if (!confirmDelete) return
         try {
-            
+
             const res = await authFetch(`${BASEURL}/api/property/delete/${id}`, {
                 method: 'DELETE'
             })
             if (!res.ok) throw new Error("Delete Failed.")
-                const data = await res.json()
+            const data = await res.json()
             navigate('/')
         } catch (e) {
             console.log("Error", e);
@@ -147,11 +147,11 @@ const PropertyDetail = () => {
             alert('Please select a visit date')
             return
         }
-        if(!visitTime){
+        if (!visitTime) {
             alert('Please select a visit Time')
             return
         }
-        if(!phone){
+        if (!phone) {
             alert('Please add your phone')
             return
         }
@@ -185,7 +185,7 @@ const PropertyDetail = () => {
             alert("Error sending request")
         }
     }
-    
+
     if (!property) return <p>Loading...</p>
 
     return (
@@ -284,6 +284,30 @@ const PropertyDetail = () => {
                         )}
                     </div>
 
+
+                    <div className="border p-3 rounded">
+                        
+                        <p className="text-gray-500 capitalize">Category</p>
+                        {isEditing ? (
+                            <>
+                                <select
+                                    name="type"
+                                    value={formData.type || ''}
+                                    onChange={handleChange}
+                                    className="w-full border p-1 rounded"
+                                >
+
+                                    <option value="residential">Residential</option>
+                                    <option value="agricultural">Agricultural</option>
+                                    <option value="commercial">Commercial</option>
+                                    <option value="industrial">Industrial</option>
+                                </select>
+                            </>
+                        ) : (
+                            <p className="font-medium text-gray-800">{property.type}</p>
+                        )}
+
+                    </div>
                 </div>
 
                 <div className="mt-4">

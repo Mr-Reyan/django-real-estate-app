@@ -8,11 +8,13 @@ function Navbar() {
 
     const [isOpen, setIsOpen] = useState(false)
     const BASEURL = import.meta.env.VITE_DJANGO_URL;
-    const { user, loading } = useAuth()
+    const { user,fetchUser,loading } = useAuth()
     const [profile, setProfile] = useState(null)
     const navigate = useNavigate()
 
-
+    useEffect(()=>{
+        fetchUser()
+    },[])
 
     let token = getAccessToken()
     const handleLogout = () => {
@@ -98,7 +100,6 @@ function Navbar() {
 
                     <a href="/" onClick={() => setIsOpen(false)} className="text-gray-700 font-medium">Properties</a>
                     <a href="/agents" onClick={() => setIsOpen(false)} className="text-gray-700 font-medium">Agents</a>
-                    <a href="/filter" onClick={() => setIsOpen(false)} className="text-gray-700 font-medium">Filters</a>
 
                     {token && (
                         <>
@@ -120,15 +121,18 @@ function Navbar() {
                             >
                                 My Profile
                             </button>
-                            <button
+                            {user.role == "agent" &&(
+
+                                <button
                                 onClick={() => {
                                     navigate(`/requests`)
                                     setIsOpen(false)
                                 }}
                                 className="px-4 py-2 cursor-pointer hover:bg-indigo-700 bg-indigo-600 text-white rounded"
-                            >
+                                >
                                 Visit Requests
                             </button>
+                            )}
                         </>
                     )}
 

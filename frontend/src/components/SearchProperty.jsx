@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Search, MapPin, DollarSign, Home } from 'lucide-react'; // Optional: for icons
+import { Search, MapPin,Building2, DollarSign, Home } from 'lucide-react'
 
-const PropertySearchBar = ({ properties,setFilteredData }) => {
+const PropertySearchBar = ({ onSearch }) => {
   const [query, setQuery] = useState({
     title: '',
-    location: '',
+    country: 'Pakistan',
     maxPrice: '',
-    type: ''
-  });
+    type: 'residential'
+  })
+
 
   const handleChange = (e) => {
     setQuery({ ...query, [e.target.name]: e.target.value });
@@ -20,7 +21,7 @@ const PropertySearchBar = ({ properties,setFilteredData }) => {
           
           {/* Keyword Search */}
           <div className="relative w-full grow">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500 h-5 w-5" />
             <input
               name="title"
               type="text"
@@ -32,22 +33,35 @@ const PropertySearchBar = ({ properties,setFilteredData }) => {
 
           {/* Location Select */}
           <div className="relative w-full md:w-48">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500 h-5 w-5" />
             <select
-              name="location"
+              name="country"
               className="w-full pl-10 pr-4 py-3 rounded-xl border-none bg-gray-50 focus:ring-2 focus:ring-blue-500 appearance-none outline-none text-gray-700 cursor-pointer"
               onChange={handleChange}
             >
-              <option value="">All Locations</option>
-              <option value="new-york">New York</option>
-              <option value="london">London</option>
-              <option value="dubai">Dubai</option>
+              <option value="pakistan">Pakistan</option>
+              <option value="india">India</option>
+              <option value="uae">UAE</option>
+            </select>
+          </div>
+
+
+          <div className="relative md:col-span-2">
+            <select
+              name="type"
+              className="w-full px-4 py-4 rounded-2xl border-none bg-gray-50 focus:ring-2 focus:ring-blue-500 appearance-none outline-none text-gray-700 cursor-pointer"
+              onChange={handleChange}
+            >
+              <option value="residential">Residential</option>
+              <option value="industrial">Industrial</option>
+              <option value="agricultural">Agricultural</option>
+              <option value="commercial">Commercial</option>
             </select>
           </div>
 
           {/* Price Input */}
           <div className="relative w-full md:w-48">
-            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500 h-5 w-5" />
             <input
               name="maxPrice"
               type="number"

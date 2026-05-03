@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import CreateProfile from "../components/CreateProfile"
 import ProfileDetail from "./ProfileDetail"
 import { useNavigate, useParams } from "react-router-dom"
-import { authFetch } from "../utils/auth"
+import { authFetch, getAccessToken } from "../utils/auth"
 import { useProperty } from "../context/PropertyContext"
 
 const ProfilePage = () => {
@@ -12,11 +12,10 @@ const ProfilePage = () => {
     const [profile, setProfile] = useState(null)
     const [loading, setLoading] = useState(true)
 
-
-
+    const navigate = useNavigate()
+    const token = getAccessToken()
     const fetchProfile = async () => {
         try {
-
             let res;
             const url = id?`${BASEURL}/api/profile/${id}`:
             `${BASEURL}/api/profile/me/`

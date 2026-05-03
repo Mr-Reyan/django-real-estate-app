@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react"
 import { FaStar } from "react-icons/fa"
-import { authFetch } from "../utils/auth";
+import { authFetch, getAccessToken } from "../utils/auth";
 
 const ReviewSection = ({ agentId,setAvgRating }) => {
     const [rating, setRating] = useState(0)
     const [hover, setHover] = useState(null)
     const [comment, setComment] = useState("")
     const [reviews, setReviews] = useState([])
-
+    const token = getAccessToken()
     const BASEURL = import.meta.env.VITE_DJANGO_URL
-
+    if(!token) return
     const fetchReviews = async () => {
         try {
             const res = await fetch(
