@@ -30,7 +30,7 @@ class UserProfile(models.Model):
             slug = base_slug
             counter = 1
 
-            while Property.objects.filter(slug=slug).exists():
+            while UserProfile.objects.filter(slug=slug).exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
 
@@ -63,11 +63,13 @@ class Property(models.Model):
         choices=STATUS_CHOICES,
         default="sale",
     )
+    
     type = models.CharField(
         max_length=20,
         choices=TYPE_CHOICES,
         default="commercial",
     )
+
     likes = models.ManyToManyField(User,related_name="liked_properties",blank=True)
     address = models.CharField(max_length=255)
     city = models.CharField(max_length=100)
@@ -128,6 +130,7 @@ class VisitRequests(models.Model):
         on_delete=models.CASCADE,
         related_name="visit_requests"
     )
+    
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -137,6 +140,7 @@ class VisitRequests(models.Model):
     name = models.CharField(max_length=225)
     phone = models.CharField(max_length=20)
     date = models.DateField()
+    time = models.TimeField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     status = models.CharField(
@@ -150,9 +154,9 @@ class VisitRequests(models.Model):
 
 class Review(models.Model):
     reviewer = models.ForeignKey(User,on_delete=models.CASCADE,related_name='given_reviews')
-    agent = models.ForeignKey(User,on_delete=models.CASCADE,related_name='recieved_reviews')
+    agent = models.ForeignKey(UserProfile,on_delete=models.CASCADE,related_name='recieved_reviews')
     rating = models.PositiveSmallIntegerField()
-    comment = models.TextField(blank=True)
+    comment = models.TextField(blank=True,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

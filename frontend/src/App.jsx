@@ -8,6 +8,8 @@ import { Route, Routes } from 'react-router-dom'
 import ProfilePage from './pages/ProfilePage'
 import Agents from './pages/Agents'
 import Filter from './components/Filter'
+import VisitRequests from './pages/VisitRequests'
+import MyVisitRequests from './pages/MyRequests'
 const App = () => {
   return (
     <>
@@ -21,6 +23,8 @@ const App = () => {
         <Route path="/profile/:id" element={<ProfilePage/>} />
         <Route path="/agents/" element={<Agents/>} />
         <Route path="/filter/" element={<Filter/>} />
+        <Route path="/requests/" element={<VisitRequests/>} />
+        <Route path="/my_requests/" element={<MyVisitRequests/>} />
       </Routes>
     </>
   )

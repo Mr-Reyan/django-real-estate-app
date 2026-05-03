@@ -30,7 +30,11 @@ export const refreshToken = async () => {
 
 const refreshAccessToken = async () => {
     const refresh = localStorage.getItem("refresh_token")
-
+    if(!refresh){
+        console.log("You are logged out!")
+        return 
+        
+    }
     const res = await fetch(`${BASEURL}/api/token/refresh/`, {
         method: "POST",
         headers: {
@@ -66,15 +70,21 @@ export const authFetch = async (url, options = {}) => {
     // if token expired
     if (res.status === 401) {
         token = await refreshAccessToken()
+        
+        if (token) {
 
-        res = await fetch(url, {
-            ...options,
-            headers: {
-                ...options.headers,
-                Authorization: `Bearer ${token}`
-            }
-        })
+            res = await fetch(url, {
+                ...options,
+                headers: {
+                    ...options.headers,
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            
+            return res
+        }
+        return
+        
     }
-
     return res
 }

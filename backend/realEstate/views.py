@@ -26,7 +26,6 @@ def get_all_agents(request):
         agents = UserProfile.objects.filter(owner__role="agent")
 
         paginator = PageNumberPagination()
-        paginator.page_size = 10
 
         result_page = paginator.paginate_queryset(agents, request)
 
@@ -55,9 +54,26 @@ def view_properties(request):
         return Response(f"Error viewing Properties: {e}",status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+def profile_properties(request, prof_id):
+    try:
+        profile = UserProfile.objects.get(id=prof_id)  
+        user = profile.owner  
+
+        properties = Property.objects.filter(owner=user)  
+        serializer = PropertySerializer(properties, many=True)
+        print("PROFILE:", profile.id)
+        print("USER:", user.id)
+        print("FILTERED COUNT:", properties.count())    
+        return Response(serializer.data)
+
+    except UserProfile.DoesNotExist:
+        return Response({"error": "Profile not found"}, status=404)
+
+
+@api_view(['GET'])
 def property_detail(request,id):
     try:
-
+        
 
         property = get_object_or_404(Property, id=id)
         serializer = PropertySerializer(property)
@@ -110,9 +126,9 @@ def create_property(request):
 
 @api_view(['DELETE'])
 @permission_classes([IsAgent])
-def delete_property(request):
-    item_id = request.data.get("item_id")
-    property = get_object_or_404(Property,id=item_id)
+def delete_property(request,property_id):
+    
+    property = get_object_or_404(Property,id=property_id)
 
     if request.user != property.owner:
         return Response({"error": "Not allowed"}, status=403)
@@ -121,26 +137,23 @@ def delete_property(request):
     return Response({'message':'Item removed.'})
 
 
-@api_view(['PUT'])
+@api_view(['PATCH'])
 @permission_classes([IsAgent])
-def update_property(request):
+def update_property(request,property_id):
 
-    item_id = request.data.get("item_id")
-    title = request.data.get("title")
-    price = request.data.get("price")
-    status = request.data.get("status")
-    if not title or not price:
-        return Response({"Error":"Title and price must be present"},status=status.HTTP_400_BAD_REQUEST)
     try:
-        property = Property.objects.get(id=item_id)
-        property.title = title
-        property.price = price
-        property.prop_status = status
-        property.save()
-        serializer = PropertySerializer(property)
+        property_obj = Property.objects.get(id=property_id)
+    except Property.DoesNotExist:
+        return Response(
+        {"error": "Property not found"},
+        status=status.HTTP_404_NOT_FOUND
+    )
+    
+    serializer = PropertySerializer(property_obj,data=request.data,partial=True)
+    if serializer.is_valid():
+        serializer.save()
         return Response(serializer.data)
-    except Exception as e:
-        return Response({"Error":f"Error while updating: {e}"},status=400)
+    return Response(serializer.errors,status=400)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -164,7 +177,6 @@ def current_user(request):
 @permission_classes([IsAuthenticated])
 def toggle_like(request,id):
     user = request.user
-
     try:
         property = Property.objects.get(id=id)
     except Property.DoesNotExist:
@@ -172,9 +184,11 @@ def toggle_like(request,id):
 
     if property.likes.filter(id=user.id).exists():
         property.likes.remove(user)
+        print("unliked")
         return Response({"message":"Unliked"},status=200)
     else:
         property.likes.add(user)
+        print("liked")
         return Response({"message":"Liked"},status=200)
     
 @api_view(['GET'])
@@ -223,6 +237,7 @@ def update_profile(request):
 @permission_classes([IsAuthenticated])
 def my_profile(request):
     try:
+        
         profile = request.user.profile
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)
@@ -250,31 +265,52 @@ def submit_request(request,property_id):
     
     if(request.user==property.owner):
         return Response({"Error":"You cannot send visit request to yourself."},status=status.HTTP_403_FORBIDDEN)
-    
-    data = request.data.copy()
-    data['user']=request.user.id
-    data['property'] = property.id
 
-    serializer = VisitReqSerializer(data = data,context={"request":request})
+    exists = VisitRequests.objects.filter(
+        user=request.user,
+        property=property
+    ).exclude(status__in=['completed', 'rejected']).exists()
+
+    if exists:
+        return Response(
+            {"error": "You already have a pending visit request."},
+            status=400
+        )
+
+    serializer = VisitReqSerializer(data = request.data,context={"request":request})
     if serializer.is_valid():
-        serializer.save()
+        serializer.save(
+            user=request.user,
+            property=property
+        )
         return Response(serializer.data,status=status.HTTP_201_CREATED)
     
     return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-def get_requests(request,property_id):
-    property = get_object_or_404(Property,id=property_id)
+@permission_classes([IsAgent])
+def get_requests(request):
+    try:
+        user = request.user
+        # visit_reqs = VisitRequests.objects.all()
+        visit_reqs = VisitRequests.objects.filter(property__owner=user)
+        
+        serializer = VisitReqSerializer(visit_reqs,many=True)
+        return Response(serializer.data,status=200)
+    except Exception as e:
+        return Response({"Error":e},status=400)
 
-    if request.user != property.owner:
-        return Response(
-            {"error": "Not allowed"},
-            status=status.HTTP_403_FORBIDDEN
-        )
-
-    visit_reqs = VisitRequests.objects.filter(property=property)
-    serializer = VisitReqSerializer(visit_reqs,many=True)
-    return Response(serializer.data,status=200)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_my_sent_requests(request):
+    try:
+        user = request.user
+        visit_reqs = VisitRequests.objects.filter(user=user)
+        
+        serializer = VisitReqSerializer(visit_reqs,many=True)
+        return Response(serializer.data,status=200)
+    except Exception as e:
+        return Response({"Error":e},status=400)
     
 
 @api_view(['PATCH'])
@@ -295,34 +331,94 @@ def reject_request(request,req_id):
 
 @api_view(['PATCH'])
 def approve_request(request,req_id):
+
     visReq = get_object_or_404(VisitRequests,id=req_id)
 
     if request.user != visReq.property.owner:
         return Response({"Error":"not allowed"},status=403)
     if visReq.status == "rejected":
         return Response(
-            {"error": "Cannot complete a rejected request"},
+            {"error": "Cannot approve a rejected request"},
             status=400
         )
     visReq.status = "approved"
     visReq.save()
     return Response({"message":"Visit request approved!"},status=200)
 
+@api_view(['PATCH'])
+def complete_request(request,req_id):
+
+    visReq = get_object_or_404(VisitRequests,id=req_id)
+    print(visReq.user)
+    if request.user != visReq.user:
+        return Response({"Error":"not allowed"},status=403)
+    if visReq.status == "rejected":
+        return Response(
+            {"error": "Cannot complete a rejected request"},
+            status=400
+        )
+    visReq.status = "completed"
+    visReq.save()
+    return Response({"message":"Visit request Completed!"},status=200)
+
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def create_review(request):
+def create_review(request,agent_id):
+    try:
+        agent = UserProfile.objects.get(id=agent_id)
+    except UserProfile.DoesNotExist:
+        return Response({"error": "Agent not found"}, status=404)
+    
+    if Review.objects.filter(
+        reviewer=request.user,
+        agent=agent
+    ).exists():
+        return Response(
+            {"Error": "Cannot review again!"},
+            status=403
+        )
+    
     serializer = ReviewSerializer(
         data=request.data,
         context={'request': request}
     )
 
     if serializer.is_valid():
-        serializer.save(reviewer=request.user)
+        serializer.save(reviewer=request.user,agent=agent)
         return Response(serializer.data, status=201)
 
     return Response(serializer.errors, status=400)
 
+
+@api_view(['GET'])
+def get_reviews(request, agent_id):
+    try:
+        agent = UserProfile.objects.get(id=agent_id)
+
+        reviews = Review.objects.filter(
+            agent=agent
+        ).order_by('-created_at')
+
+        serializer = ReviewSerializer(
+            reviews,
+            many=True
+        )
+
+        return Response(serializer.data)
+
+    except UserProfile.DoesNotExist:
+        return Response(
+            {"error": "Profile not found"},
+            status=404
+        )
+
+    except Exception as e:
+        return Response(
+            {"error": str(e)},
+            status=500
+        )
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

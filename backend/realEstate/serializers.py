@@ -59,29 +59,24 @@ class ProfileSerializer(serializers.ModelSerializer):
     
 
 class VisitReqSerializer(serializers.ModelSerializer):
-
+    user = UserSerializer(read_only=True)
+    property = PropertySerializer(read_only=True)
+    
     class Meta:
         model = VisitRequests
         fields = "__all__"
     
 
-    def validate(self,data):
-        user = self.context['request'].user
-
-        exists =  VisitRequests.objects.filter(
-            user = user,
-            property = data['property']
-        ).exclude(status__in=['completed', 'rejected']).exists()
-        if exists:
-            raise serializers.ValidationError("You already have an active visit request for this property.")
-        return data
-
 class ReviewSerializer(serializers.ModelSerializer):
-    
+    reviewer_name = serializers.CharField(
+        source="reviewer.username",
+        read_only=True
+    )
+
     class Meta:
         model = Review
         fields = "__all__"
-        read_only_fields = ["reviewer", "created_at"]
+        read_only_fields = ["reviewer"]
 
     def validate_rating(self, value):
         if value < 1 or value > 5:

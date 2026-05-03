@@ -65,96 +65,137 @@ const AddProp = ({ setAddProp }) => {
 
 
     }
-    return (
-        <div className='w-screen h-screen flex items-center justify-center border bg-neutral-200'>
-            <button onClick={() => setAddProp(false)}>X</button>
-            <br />
-            <form onSubmit={handleSubmit} className="p-4 space-y-3 flex flex-col">
+    return (<div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    
+    <div className="bg-white w-full max-w-2xl rounded-xl shadow-xl p-6 relative">
+        
+        <button
+            onClick={() => setAddProp(false)}
+            className="absolute cursor-pointer top-3 right-3 text-gray-500 hover:text-red-500 text-lg"
+        >
+            ✕
+        </button>
 
-                <input
-                    name="title"
-                    placeholder="Title"
+        <h2 className="text-xl font-semibold text-blue-700 mb-4 text-center">
+            Create New Property
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-3">
+
+            <input
+                name="title"
+                placeholder="Title"
+                onChange={handleChange}
+                className="w-full border rounded-md p-2 focus:outline-blue-500"
+                required
+            />
+
+            <textarea
+                name="description"
+                placeholder="Description"
+                onChange={handleChange}
+                className="w-full border rounded-md p-2 focus:outline-blue-500"
+            />
+
+            <input
+                name="price"
+                placeholder="Price"
+                type="number"
+                onChange={handleChange}
+                className="w-full border rounded-md p-2 focus:outline-blue-500"
+                required
+            />
+
+            <div className="grid grid-cols-2 gap-3">
+                <select
+                    name="prop_status"
                     onChange={handleChange}
-                    className="border p-2 w-auto min-w-64"
+                    className="border rounded-md p-2 focus:outline-blue-500"
                     required
-                />
-
-                <textarea
-                    name="description"
-                    placeholder="Description"
-                    onChange={handleChange}
-                    className="border p-2 w-auto min-w-64"
-                />
-
-                <input
-                    name="price"
-                    placeholder="Price"
-                    type="number"
-                    onChange={handleChange}
-                    className="border p-2 w-auto min-w-64"
-                    required
-                />
-
-                <select name="prop_status" required onChange={handleChange} className="border p-2 w-auto min-w-64">
+                >
                     <option value="sale">Sale</option>
                     <option value="rent">Rent</option>
                 </select>
 
-                <select name="type" onChange={handleChange} className="border p-2 w-auto min-w-64">
+                <select
+                    name="type"
+                    onChange={handleChange}
+                    className="border rounded-md p-2 focus:outline-blue-500"
+                >
                     <option value="residential">Residential</option>
                     <option value="commercial">Commercial</option>
                     <option value="industrial">Industrial</option>
                     <option value="agricultural">Agricultural</option>
                 </select>
+            </div>
 
-                <input
-                    name="address"
-                    placeholder="Address"
-                    onChange={handleChange}
-                    className="border p-2 w-auto min-w-64"
-                />
+            <input
+                name="address"
+                placeholder="Address"
+                onChange={handleChange}
+                className="w-full border rounded-md p-2"
+            />
 
+            <div className="grid grid-cols-2 gap-3">
                 <input
                     name="city"
                     placeholder="City"
                     onChange={handleChange}
-                    className="border p-2 w-auto min-w-64"
+                    className="border rounded-md p-2"
                 />
-
                 <input
                     name="state"
                     placeholder="State"
                     onChange={handleChange}
-                    className="border p-2 w-auto min-w-64"
+                    className="border rounded-md p-2"
                 />
+            </div>
 
+            <div className="grid grid-cols-2 gap-3">
                 <input
                     name="country"
                     placeholder="Country"
                     onChange={handleChange}
-                    className="border p-2 w-auto min-w-64"
+                    className="border rounded-md p-2"
                 />
-
                 <input
                     name="postal_code"
                     placeholder="Postal Code"
                     onChange={handleChange}
-                    className="border p-2 w-auto min-w-64"
+                    className="border rounded-md p-2"
                 />
+            </div>
 
-                <input
-                    type="file"
-                    multiple
-                    onChange={handleImages}
-                    className="border p-2 w-auto cursor-pointer hover:bg-zinc-300 min-w-64"
-                />
+            <div className="w-full">
+    <p className="text-sm text-gray-500 mb-1">
+        Add Property Images
+    </p>
 
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2">
-                    Create Property
-                </button>
+    <input
+        type="file"
+        multiple
+        onChange={handleImages}
+        className="w-full border rounded-md p-2 hover:bg-gray-200 cursor-pointer bg-gray-50"
+    />
+</div>
 
-            </form>
-        </div>
+            <button
+                type="submit"
+                className="
+                    w-full 
+                    bg-blue-600 
+                    hover:bg-blue-700 
+                    text-white 
+                    py-2 
+                    rounded-md 
+                    transition
+                "
+            >
+                Create Property
+            </button>
+        </form>
+    </div>
+</div>
     )
 }
 

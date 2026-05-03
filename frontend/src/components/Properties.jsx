@@ -17,7 +17,7 @@ const Properties = () => {
 
 
     useEffect(() => {
-        getProperties()
+        getProperties(page)
         const fetchUser = async () => {
             const token = getAccessToken()
             if (!token) {
@@ -36,15 +36,35 @@ const Properties = () => {
 
     return (
         <>
-            <h4>Total properties:{count}</h4>
-            {addProp && <AddProp setAddProp={setAddProp} getProperties={getProperties} />}
+            <h4 className="text-lg font-semibold text-center text-blue-800 mb-3">
+                Total properties:{" "}
+                <span className="text-blue-600">{count}</span>
+            </h4>
+
+            {addProp && (
+                <AddProp setAddProp={setAddProp} getProperties={getProperties} />
+            )}
+
             {user && user.role === "agent" && (
-                <button
-                    onClick={() => setAddProp(true)}
-                    className="bg-green-700 cursor-pointer text-white p-2 rounded-sm my-3"
-                >
-                    Add Property
-                </button>
+                <div className="flex justify-center my-3">
+    <button
+        onClick={() => setAddProp(true)}
+        className="
+            bg-blue-600 
+            hover:bg-blue-700 
+            text-white 
+            px-4 
+            py-2 
+            rounded-md 
+            shadow-sm 
+            transition 
+            duration-200
+            cursor-pointer
+        "
+    >
+        + Add Property
+    </button>
+</div>
             )}
             <div className="w-screen flex flex-wrap justify-center items-center py-10 px-4 ">
 
@@ -57,7 +77,7 @@ const Properties = () => {
                                     ? `${BASEURL}${item.images.find(img => img.is_primary).image}`
                                     : item.images?.[0]?.image
                                         ? `${BASEURL}${item.images[0].image}`
-                                        : "/nothing.jpg"
+                                        : "/bed.jpg"
                                 }
                                 className="h-56 w-50 rounded-md object-cover" />
 
@@ -113,13 +133,6 @@ const Properties = () => {
                 }
             </div>
             <div className="flex gap-3 w-auto justify-center items-center">
-
-
-
-
-
-                
-
                 <button
                     disabled={!prevPage}
                     onClick={() => changePage(Number(page) - 1)}

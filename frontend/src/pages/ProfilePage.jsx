@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react"
 import CreateProfile from "../components/CreateProfile"
 import ProfileDetail from "./ProfileDetail"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { authFetch } from "../utils/auth"
+import { useProperty } from "../context/PropertyContext"
 
 const ProfilePage = () => {
     const BASEURL = import.meta.env.VITE_DJANGO_URL
@@ -11,20 +12,25 @@ const ProfilePage = () => {
     const [profile, setProfile] = useState(null)
     const [loading, setLoading] = useState(true)
 
+
+
     const fetchProfile = async () => {
         try {
 
             let res;
-
+            const url = id?`${BASEURL}/api/profile/${id}`:
+            `${BASEURL}/api/profile/me/`
             if (id) {
-                res = await fetch(`${BASEURL}/api/profile/${id}`)
+                res = await fetch(url)
+                
             } else {
-                res = await authFetch(`${BASEURL}/api/profile/me/`)
+                res = await authFetch(url)
             }
 
             if (res.status === 404) {
+
                 setProfile(null)
-                console.log("Create a profile first!")
+                alert("Create a profile first!")
                 
                 return
             }
@@ -33,7 +39,7 @@ const ProfilePage = () => {
             setProfile(data)
 
         } catch (err) {
-            console.log(err)
+            console.log(err)    
             setProfile(null)
         } finally {
             setLoading(false)
@@ -49,17 +55,21 @@ const ProfilePage = () => {
     return (
         <div>
 
-            {!profile ? (
-                <div className="text-center">
-                    <p className="mb-4 text-gray-600">
-                        You don't have a profile yet!
-                    </p>
+            <div>
 
-                    <CreateProfile onCreated={(data) => setProfile(data)} />
-                </div>
-            ) : (
-                <ProfileDetail profile={profile} onUpdate={(data) => setProfile(data)} />
-            )}
+                {!profile ? (
+                    <div className="text-center">
+                        <p className="mb-4 text-gray-600">
+                            You don't have a profile yet!
+                        </p>
+
+                        <CreateProfile onCreated={(data) => setProfile(data)} />
+                    </div>
+                ) : (
+                    <ProfileDetail profile={profile} onUpdate={(data) => setProfile(data)} />
+                )}
+            </div>
+            
         </div>
     )
 }

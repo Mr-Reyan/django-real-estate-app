@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext, useContext } from "react";
-import {useSearchParams} from 'react-router-dom'
+import {useParams, useSearchParams} from 'react-router-dom'
 import { authFetch, getAccessToken } from "../utils/auth";
+import { useAuth } from "./AuthContext";
 const PropertyContext = createContext()
 
 export const PropertyProvider = ({ children }) => {
@@ -10,9 +11,30 @@ export const PropertyProvider = ({ children }) => {
     const [prevPage, setPrevPage] = useState(null)
     const [count, setCount] = useState(0)
     const [searchParams, setSearchParams] = useSearchParams()
-    const [currentUrl, setCurrentUrl] = useState()
-
+    const [profileProp,setProfileProp] = useState()
     const page = searchParams.get("page") || 1
+    const {id} = useParams()
+
+
+    const getProfileProp = async (prof_id) =>{
+        if (!prof_id) return
+        try{
+
+            const res = await fetch(`${BASEURL}/api/profile/${prof_id}/properties`)
+
+            if(!res.ok){
+                throw new Error("HTTP Error. status:" + res.status)
+            }
+            const data = await res.json()
+            console.log(data)
+            
+            setProfileProp(data)
+
+        } catch (e){
+            console.log("Error fetching property:",e);
+            
+        }
+    }
 
     const getProperties = async (pageNumber = page) => {
         try {
@@ -41,14 +63,11 @@ export const PropertyProvider = ({ children }) => {
         }
     }
 
-    useEffect(() => {
-        getProperties(page)
 
-    }, [])
 
-    const changePage = (newPage) => {
+const changePage = (newPage) => {
     setSearchParams({ page: newPage })   
-    getProperties(newPage)               
+    getProperties(newPage)
 }
 
 
@@ -73,7 +92,7 @@ export const PropertyProvider = ({ children }) => {
 
     return (
         <PropertyContext.Provider
-            value={{ deleteProp, getProperties, properties,setNextPage,setPrevPage,setCount, prevPage, nextPage, count, changePage, page }}
+            value={{ deleteProp, getProperties, properties,setNextPage,setPrevPage,setCount, prevPage, nextPage, count, changePage, page,getProfileProp,profileProp }}
         >
             {children}
         </PropertyContext.Provider>

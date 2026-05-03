@@ -14,6 +14,7 @@ export const AuthProvider = ({children}) =>{
             if(!token) return null
             
             const res = await authFetch(`${BASEURL}/api/user/`)
+            
             if (!res.ok) return null
             
             
@@ -31,6 +32,7 @@ export const AuthProvider = ({children}) =>{
         const fetchUser = async ()=>{
             const data = await getUser()
             setUser(data)
+            
             setLoading(false)
         }
         fetchUser()
