@@ -396,7 +396,7 @@ def create_review(request,agent_id):
 def get_reviews(request, agent_id):
     try:
         agent = UserProfile.objects.get(id=agent_id)
-
+        avg_rating = Review.get_avg_rating(agent)
         reviews = Review.objects.filter(
             agent=agent
         ).order_by('-created_at')
@@ -406,7 +406,7 @@ def get_reviews(request, agent_id):
             many=True
         )
 
-        return Response(serializer.data)
+        return Response({"reviews":serializer.data,"avg_rating":avg_rating})
 
     except UserProfile.DoesNotExist:
         return Response(

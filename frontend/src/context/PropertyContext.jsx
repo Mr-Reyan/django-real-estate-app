@@ -26,7 +26,6 @@ export const PropertyProvider = ({ children }) => {
                 throw new Error("HTTP Error. status:" + res.status)
             }
             const data = await res.json()
-            console.log(data)
             
             setProfileProp(data)
 

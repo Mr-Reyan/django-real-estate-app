@@ -11,7 +11,6 @@ function VisitRequests() {
         try {
             const res = await authFetch(`${BASEURL}/api/get_requests`)
             const data = await res.json()
-            console.log(data)
 
             setRequests(data)
         } catch (err) {

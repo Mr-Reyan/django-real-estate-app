@@ -4,6 +4,7 @@ import { useProperty } from '../context/PropertyContext'
 import AddProp from "./AddProp"
 import { getAccessToken } from "../utils/auth"
 import { useAuth } from "../context/AuthContext"
+import SearchProperty from "./SearchProperty"
 const Properties = () => {
     const { properties, deleteProp, getProperties, prevPage, nextPage, count, page, changePage } = useProperty()
 
@@ -11,6 +12,13 @@ const Properties = () => {
     const [addProp, setAddProp] = useState(false)
     const [user, setUser] = useState(null)
     const { getUser } = useAuth()
+    const [filters, setFilters] = useState({
+        title: '',
+        location: '',
+        minPrice: 0,
+        maxPrice: 1000000,
+        type: '' // residential etc
+    })
 
     const navigate = useNavigate()
 
@@ -27,18 +35,26 @@ const Properties = () => {
             const data = await getUser()
             setUser(data)
 
-
         }
         fetchUser()
     }, [])
 
+    // const filteredProperties = properties.filter((p) =>
+    //     `${p.title} ${p.location}`
+    //         .toLowerCase()
+    //         .includes(filters.toLowerCase())
+    // )
 
 
     return (
         <>
-            <h4 className="text-lg font-semibold text-center text-blue-800 mb-3">
+            <SearchProperty properties={properties} />
+
+
+
+            <h4 className="text-lg font-semibold text-center text-gray-500 mb-3">
                 Total properties:{" "}
-                <span className="text-blue-600">{count}</span>
+                <span className="text-gray-500">{count}</span>
             </h4>
 
             {addProp && (
@@ -47,24 +63,13 @@ const Properties = () => {
 
             {user && user.role === "agent" && (
                 <div className="flex justify-center my-3">
-    <button
-        onClick={() => setAddProp(true)}
-        className="
-            bg-blue-600 
-            hover:bg-blue-700 
-            text-white 
-            px-4 
-            py-2 
-            rounded-md 
-            shadow-sm 
-            transition 
-            duration-200
-            cursor-pointer
-        "
-    >
-        + Add Property
-    </button>
-</div>
+                    <button
+                        onClick={() => setAddProp(true)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md shadow-sm transition duration-200 cursor-pointer"
+                    >
+                        + Add Property
+                    </button>
+                </div>
             )}
             <div className="w-screen flex flex-wrap justify-center items-center py-10 px-4 ">
 

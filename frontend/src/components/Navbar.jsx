@@ -21,6 +21,7 @@ function Navbar() {
         window.location.reload()
     }
 
+    
     if (loading) return null
 
     return (
@@ -58,20 +59,22 @@ function Navbar() {
                             >
                                 My Profile
                             </button>
+                            {user.role == "agent" &&
                             <button
-                                onClick={() => {
-                                    navigate(`/requests`)
-                                    setIsOpen(false)
-                                }}
-                                className="px-4 py-2 cursor-pointer hover:bg-indigo-700 bg-indigo-600 text-white rounded"
+                            onClick={() => {
+                                navigate(`/requests`)
+                                setIsOpen(false)
+                            }}
+                            className="px-4 py-2 cursor-pointer hover:bg-indigo-700 bg-indigo-600 text-white rounded"
                             >
                                 Visit Requests
                             </button>
+                            }
                         </>
                 )}
 
                 {user ? (
-                    <button onClick={handleLogout} className="text-gray-800 hover:text-gray-600 font-medium">
+                    <button onClick={handleLogout} className="cursor-pointer text-gray-800 hover:text-gray-600 font-medium">
                         Logout
                     </button>
                 ) : (

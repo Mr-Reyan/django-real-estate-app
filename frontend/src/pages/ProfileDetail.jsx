@@ -7,7 +7,7 @@ import ReviewSection from "../components/ReviewSection";
 
 const ProfileDetail = ({ profile, onUpdate }) => {
   const BASEURL = import.meta.env.VITE_DJANGO_URL
-
+  const [avgRating, setAvgRating] = useState(0)
   const [isEditing, setIsEditing] = useState(false)
   const [isOwner, setIsOwner] = useState(false)
   const { getUser, user } = useAuth()
@@ -15,7 +15,7 @@ const ProfileDetail = ({ profile, onUpdate }) => {
 
   const navigate = useNavigate()
 
-  
+
   const [form, setForm] = useState({
     name: profile.name,
     age: profile.age,
@@ -43,7 +43,7 @@ const ProfileDetail = ({ profile, onUpdate }) => {
 
     if (res.ok) {
       onUpdate(data)
-      
+
       setIsEditing(false)
 
     }
@@ -53,23 +53,23 @@ const ProfileDetail = ({ profile, onUpdate }) => {
 
   useEffect(() => {
     const checkOwner = async () => {
-      
+
       const user = await getUser()
       if (user?.id == profile?.owner) {
         setIsOwner(true)
       }
     }
     checkOwner()
-    
+
   }, [])
   const profileId = id || user?.id
-  
+
   useEffect(() => {
-      if(profileId){
-          getProfileProp(profileId)
-      }
+    if (profileId) {
+      getProfileProp(profileId)
+    }
   }, [profileId])
-  
+
   if (!isEditing) {
     return (
       <>
@@ -94,16 +94,16 @@ const ProfileDetail = ({ profile, onUpdate }) => {
             <p><span className="text-gray-500">Age:</span> {profile.age}</p>
             <p><span className="text-gray-500">Phone:</span> {profile.phone}</p>
             <p><span className="text-gray-500">Address:</span> {profile.address}</p>
-            <p><span className="text-gray-600 text-lg font-bold">Rating:</span>⭐</p>
+            <p><span className="text-gray-600 text-lg font-bold">Rating:</span>⭐ {avgRating.toFixed(1)}</p>
           </div>
 
         </div>
         <div className="w-screen flex flex-col justify-center items-center py-10 px-4">
-          
-          
 
-            <ReviewSection agentId = {profile.owner}/>
-          </div>
+
+
+          <ReviewSection agentId={profile.owner} setAvgRating={setAvgRating} />
+        </div>
 
 
 

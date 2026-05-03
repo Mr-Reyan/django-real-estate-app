@@ -1,7 +1,7 @@
 
 
 
-import { data, useParams } from "react-router-dom"
+import { data, useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import { authFetch, getAccessToken } from "../utils/auth"
@@ -9,6 +9,7 @@ import { authFetch, getAccessToken } from "../utils/auth"
 const PropertyDetail = () => {
     const token = getAccessToken()
     const { id } = useParams()
+    const navigate = useNavigate()
     const [property, setProperty] = useState(null)
     const BASEURL = import.meta.env.VITE_DJANGO_URL
     const { getUser, user } = useAuth()
@@ -134,7 +135,7 @@ const PropertyDetail = () => {
             })
             if (!res.ok) throw new Error("Delete Failed.")
                 const data = await res.json()
-            console.log("deleted: ", data);
+            navigate('/')
         } catch (e) {
             console.log("Error", e);
         }

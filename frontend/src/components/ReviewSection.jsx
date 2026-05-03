@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react"
 import { FaStar } from "react-icons/fa"
 import { authFetch } from "../utils/auth";
 
-const ReviewSection = ({ agentId }) => {
+const ReviewSection = ({ agentId,setAvgRating }) => {
     const [rating, setRating] = useState(0)
     const [hover, setHover] = useState(null)
     const [comment, setComment] = useState("")
     const [reviews, setReviews] = useState([])
+
     const BASEURL = import.meta.env.VITE_DJANGO_URL
 
     const fetchReviews = async () => {
@@ -16,14 +17,15 @@ const ReviewSection = ({ agentId }) => {
             );
 
             if (!res.ok) {
-                throw new Error(`HTTP Error: ${res.status}`);
+                throw new Error(`HTTP Error: ${res.status}`)
             }
 
             const data = await res.json();
-            setReviews(data);
+            setReviews(data.reviews)
+            setAvgRating(data.avg_rating)
 
         } catch (err) {
-            console.log("Review fetch error:", err);
+            console.log("Review fetch error:", err)
         }
     }
 
@@ -45,19 +47,18 @@ const ReviewSection = ({ agentId }) => {
                 }
             );
 
-            const data = await res.json();
-            console.log(data)
+            const data = await res.json()
 
             if (res.ok) {
-                alert("Review submitted!");
-                setRating(0);
-                setComment("");
-                fetchReviews();
+                alert("Review submitted!")
+                setRating(0)
+                setComment("")
+                fetchReviews()
             } else {
-                alert(data.error || "Review Failed");
+                alert(data.error || "Review Failed")
             }
         } catch (err) {
-            console.log(err);
+            console.log(err)
         }
     };
 
@@ -91,16 +92,15 @@ const ReviewSection = ({ agentId }) => {
                 onChange={(e) => setComment(e.target.value)}
             />
 
-            <button className="bg-blue-500 cursor-pointer p-2 rounded text-white" onClick={submitReview} >
+            <button className="bg-blue-500 cursor-pointer hover:bg-blue-600 p-2 rounded text-white" onClick={submitReview} >
                 Submit Review
             </button>
 
             <hr />
 
-            {reviews.map((review) => {console.log(review) 
-            return(
+            {reviews.map((review) =>(
                 <div key={review.id} className="review-card">
-                    <h4>Username: {review.reviewer_name}</h4>
+                    <h4>User: {review.reviewer_name}</h4>
 
                     <div>
                         {"⭐".repeat(review.rating)}
@@ -110,7 +110,7 @@ const ReviewSection = ({ agentId }) => {
                         <p>{review.comment}</p>
                     )}
                 </div>
-            )})}
+            ))}
         </div>
     );
 };
