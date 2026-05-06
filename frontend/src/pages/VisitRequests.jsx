@@ -87,7 +87,7 @@ function VisitRequests() {
                                 </p>
 
                                 <p className="text-sm text-gray-500">
-                                    Request Date: {req.created_at?.slice(0, 10)}
+                                    Request Date: {req.date}
                                 </p>
                                 <p className="text-sm text-gray-800">
                                     Visit Time: {req.time?.split(":").slice(0, 2).join(":")}
