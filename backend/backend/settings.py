@@ -14,9 +14,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = True
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-ALLOWED_HOSTS = ["*","https://django-real-estate-app-production.up.railway.app"]
-
-
+ALLOWED_HOSTS = [
+    "django-real-estate-app-production.up.railway.app",
+    "localhost",
+    "127.0.0.1",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "https://django-real-estate-app-production.up.railway.app",
+]
+DEBUG = False
 # Application definition
 
 INSTALLED_APPS = [
@@ -111,7 +117,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
